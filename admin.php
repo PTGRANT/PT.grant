@@ -245,5 +245,6 @@ $isLoggedIn = !empty($_SESSION['pt_admin_logged_in']);
 
         document.addEventListener('DOMContentLoaded', loadAdminData);
     </script>
+<?php endif; ?>
 </body>
 </html>
