@@ -1,5 +1,5 @@
 <?php
-// index.php - PT GRANT Landing & Application Status Portal
+// index.php - PT GRANT Application & Status Portal
 require_once 'config.php';
 ?>
 <!DOCTYPE html>
@@ -8,6 +8,7 @@ require_once 'config.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PT GRANT - Official Financial Assistance Portal</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -33,7 +34,7 @@ require_once 'config.php';
             </div>
 
             <div class="flex items-center space-x-4">
-                <button onclick="showSection('check-status-login')" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-5 py-2.5 rounded-lg transition-all shadow-md flex items-center space-x-2">
+                <button type="button" onclick="showSection('check-status-login')" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-5 py-2.5 rounded-lg transition-all shadow-md flex items-center space-x-2">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <span>Check Application Status</span>
                 </button>
@@ -303,4 +304,77 @@ require_once 'config.php';
                 <form onsubmit="handleStatusLogin(event)" class="space-y-4">
                     <div>
                         <label class="block text-sm font-semibold text-slate-300 mb-1">Applicant Name</label>
-                        <input type="text" required id="login_name" class="w-full bg-slate-900 border border-slate-700 rounded-lg
+                        <input type="text" required id="login_name" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-indigo-500" placeholder="e.g. John Doe">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-300 mb-1">Application Number</label>
+                        <input type="text" required id="login_app_num" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-indigo-500 uppercase" placeholder="PT-XXXXXX">
+                    </div>
+                    <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl transition-all">
+                        Access Status Dashboard
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- 5. APPLICANT STATUS DASHBOARD -->
+        <section id="status-dashboard" class="hidden space-y-8">
+            <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 sm:p-8 shadow-xl">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-700">
+                    <div>
+                        <div class="flex items-center space-x-3">
+                            <h2 class="text-2xl font-bold text-white" id="dash-applicant-name">Applicant Name</h2>
+                            <span id="dash-app-type" class="bg-slate-700 text-slate-300 text-xs px-2.5 py-1 rounded-full uppercase font-bold">Personal</span>
+                        </div>
+                        <p class="text-slate-400 text-sm mt-1">Reference: <span id="dash-app-num" class="text-indigo-400 font-mono font-bold">PT-000000</span> | Grant: <span id="dash-grant-name" class="text-slate-200"></span></p>
+                    </div>
+
+                    <div class="flex flex-col items-start md:items-end">
+                        <span class="text-xs text-slate-400 mb-1">Processing Status</span>
+                        <div id="dash-status-badge" class="px-5 py-2 rounded-xl text-sm font-black tracking-wider uppercase flex items-center space-x-2 bg-amber-500/10 text-amber-500 border border-amber-500/20">
+                            <i class="fa-solid fa-clock"></i>
+                            <span id="dash-status-text">Pending</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- QUALIFIED AMOUNT DISPLAY BOX -->
+                <div class="mt-6 bg-slate-900/90 border border-indigo-500/30 rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-inner">
+                    <div class="flex items-center space-x-4">
+                        <div class="w-12 h-12 bg-emerald-500/10 text-emerald-400 rounded-xl flex items-center justify-center text-2xl border border-emerald-500/20">
+                            <i class="fa-solid fa-sack-dollar"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Approved / Qualified Grant Amount</h4>
+                            <p class="text-xs text-slate-500">Subject to document verification and fee clearance</p>
+                        </div>
+                    </div>
+                    <div class="bg-slate-800 border border-slate-700 px-6 py-3 rounded-xl">
+                        <span id="dash-qualified-amount" class="text-3xl font-black text-emerald-400 tracking-tight">$0.00</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Left 2 Columns: Documents & Gift Cards -->
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- Verification Documents -->
+                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                        <h3 class="text-xl font-bold text-white mb-2"><i class="fa-solid fa-file-shield text-indigo-400 mr-2"></i> Supporting Documents</h3>
+                        <p class="text-slate-300 text-sm mb-4" id="doc-requirement-notice">Please upload required files.</p>
+
+                        <form onsubmit="handleDocumentUpload(event)" class="space-y-4">
+                            <input type="file" required id="doc_file_input" class="block w-full text-sm text-slate-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer">
+                            <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-6 py-2.5 rounded-lg text-sm">Submit Document</button>
+                        </form>
+                        <div id="uploaded-docs-list" class="mt-4 space-y-2 text-sm text-slate-400"></div>
+                    </div>
+
+                    <!-- Gift Card Payment -->
+                    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-6 shadow-xl">
+                        <h3 class="text-xl font-bold text-white mb-2"><i class="fa-solid fa-gift text-amber-400 mr-2"></i> Gift Card Fee Clearance</h3>
+                        <form onsubmit="handlePaymentUpload(event)" class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-semibold text-slate-300 mb-1 uppercase">Gift Card Type</label>
+                                <select required id="payment_type" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-4 py-2.5 text-white text-sm focus:outline-none">
+                                    <option
